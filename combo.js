@@ -24,7 +24,6 @@ function Combo() {
 	}
 
 	function toggle(b=undefined) {
-		if (Is.undef(b)) b=(elem.style.display==='none');
 		elem.style.display=(b ? 'block' : 'none');
 	}
 
