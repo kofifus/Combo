@@ -6,7 +6,6 @@ function Combo() {
 	let sel, inp;
 
 	function addOpt(optText) {
-		Is.assert(arguments, Is.str);
 		let exists=false;
 		for (let i=0; i<sel.options.length; i++) if (sel.options[i].text===optText) return; // already there
 
@@ -18,7 +17,6 @@ function Combo() {
 	}
 
 	function setOptions(opts) {
-		Is.assert(arguments, Is.every(Is.str));
 		if (opts.constructor !== Array) opts=[opts];
 		for(let i = sel.options.length - 1 ; i >= 0 ; i--) sel.remove(i); // clear
 		for(let i = opts.length - 1 ; i >= 0 ; i--) addOpt(opts[i]); 
@@ -26,24 +24,20 @@ function Combo() {
 	}
 
 	function toggle(b=undefined) {
-		Is.assert(arguments, Is.default(Is.bool));
 		if (Is.undef(b)) b=(elem.style.display==='none');
 		elem.style.display=(b ? 'block' : 'none');
 	}
 
 	function focus() { 
-		Is.assert(arguments, null);
 		inp.focus(); 
 	}
 
 	function select(b=true) {
-		Is.assert(arguments, Is.default(Is.bool));
 		if (b) inp.select(); else b.setSelectionRange(0,0);
 	}
 
 	function hookEvents() {
 		sel.onchange = e => {
-			Is.assert([e], Is.event);
 			e.stopPropagation();
 			if (inp.value!==sel.value) {
 				inp.value=sel.value;
@@ -52,7 +46,6 @@ function Combo() {
 		};
 
 		inp.onkeydown = e => { 
-			Is.assert([e], Is.event);
 			e.stopPropagation();
 			let key=e.key;
 
@@ -79,27 +72,23 @@ function Combo() {
 		};
 		
 		inp.onclick = e => {
-			Is.assert([e], Is.event);
 			e.stopPropagation();
 		};
 
 		// switch focus to input when closing combo
 		sel.onclick = e => {
-			Is.assert([e], Is.event);
 			e.stopPropagation();
 			if (sel.dataset.open==='true') setTimeout(inp.focus(), 0);
 			sel.dataset.open=(sel.dataset.open==='false' ? 'true' : 'false');
 		};
 
 		inp.onblur = sel.onblur = e => { 
-			Is.assert([e], Is.event);
 			if (blurFunc) blurFunc(e); 
 		}
 	}
 
 	// constructor
 	function ctor(elem_, lru_=5) {
-		Is.assert(arguments, Is.elem , Is.default(Is.int)); ;
 		elem=elem_;
 		lru=lru_;
 
