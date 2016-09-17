@@ -19,7 +19,7 @@ let combo=Combo.New(div);
 methods:
 
 - Combo(div) - constructor 
-- toggle(bool) - show/hide or toggle if s undefined 
+- toggle(bool) - show/hide or toggle if passed undefined 
 - focus() - move focus to the input area
 - select() - select/deselect the text in the input field
 
