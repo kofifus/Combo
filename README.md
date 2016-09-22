@@ -33,8 +33,8 @@ getters:
 setters: 
 
 - value=val -set value of input area
-- onchange=f - f(self) will be called when enter is pressed in the input field or selection changes
-- onkeydown=f - call f when a key is pressed in the input field with (e.key, value())
+- onchange=f - f(val, self) will be called when enter is pressed in the input field or selection changes
+- onkeydown=f - // f(event, self) will be called when keydown is pressed with
 - onblur=f - f(event, self) will be called on blur
 <br/><br/>
 
