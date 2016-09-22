@@ -19,25 +19,23 @@ let combo=Combo.New(div);
 methods:
 
 - Combo(div) - constructor 
-- toggle(bool) - show/hide or toggle if passed undefined 
+- toggle(true/false/undefined) - show/hide/toggle combo
 - focus() - move focus to the input area
-- select() - select/deselect the text in the input field
+- select(true/false/undefined) - select/deselect the text in the input field, default trure
+- options(array/undefined) - sets/returns the array of options , default undefined
+- getInputElement() - return the input element
+- getSelectElement() - return the select element
 
 getters:
 
 - value - return value of input area
-- options - return array of select options
-- inputElement - return the input element
-- selectElement - return the select element
 
 setters: 
 
 - value=val -set value of input area
-- options=array_of_options - set select with the options in array_of_options
-- onchange=f - call f with (value) when selection changes
-- onescape=f - call f when escape is pressed
+- onchange=f - f(self) will be called when enter is pressed in the input field or selection changes
 - onkeydown=f - call f when a key is pressed in the input field with (e.key, value())
-onblur=f call f with (event) object on blur
+- onblur=f - f(event, self) will be called on blur
 <br/><br/>
 
 **Example:**
