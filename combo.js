@@ -47,7 +47,7 @@ function Combo() {
 			e.stopPropagation();
 			if (inp.value!==sel.value) {
 				inp.value=sel.value;
-				if (changeFunc) ctxs(changeFunc, self);
+				if (changeFunc) ctxs(changeFunc, sel.value, self);
 			}
 		};
 
@@ -58,7 +58,7 @@ function Combo() {
 			if (key==='Enter') {
 				if (inp.value) {
 					addOpt(inp.value);
-					if (changeFunc) ctxs(changeFunc, self);
+					if (changeFunc) ctxs(changeFunc, inp.value, self);
 				}
 			} else if (key==='ArrowUp') {
 				if (sel.selectedIndex>0) {
@@ -81,10 +81,9 @@ function Combo() {
 			e.stopPropagation();
 		};
 
-		// switch focus to input when closing combo
 		sel.onclick = e => {
 			e.stopPropagation();
-			if (sel.dataset.open==='true') ctxs(() => { inp.focus(); });
+			if (sel.dataset.open==='true') ctxs(() => { inp.focus(); }); else	sel.selectedIndex = -1; 
 			sel.dataset.open=(sel.dataset.open==='false' ? 'true' : 'false');
 		};
 
@@ -142,7 +141,7 @@ function Combo() {
 		get value() { return inp.value; }, // () return value of input area
 		set value(val) { inp.value=val; }, // (string) set value of input area
 
-		set onchange(f) { changeFunc=f;  }, // f(self) will be called when enter is pressed in the input field or selection changes
+		set onchange(f) { changeFunc=f;  }, // f(val, self) will be called when enter is pressed in the input field or selection changes
 		set onkeydown(f) { keydownFunc=f;  }, // f(event, self) will be called when keydown is pressed with
 		set onblur(f) { blurFunc=f;  }, // f(event, self) will be called on blur
 	};
