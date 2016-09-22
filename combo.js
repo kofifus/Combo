@@ -5,7 +5,7 @@ function Combo() {
 	let changeFunc, keydownFunc, blurFunc;
 	let sel, inp;
 
-	function ctxs(...args) { 	setTimeout(() => args[0](...(args.slice(1))), 0);  } // context switch
+	function ctxs(...args) { setTimeout(() => args[0](...(args.slice(1))), 0);  } // context switch
 
 	function getInputElement() { return inp; }
 	function getSelectElement() { return sel; 	}
@@ -84,7 +84,7 @@ function Combo() {
 		// switch focus to input when closing combo
 		sel.onclick = e => {
 			e.stopPropagation();
-			if (sel.dataset.open==='true') ctxs(inp.focus);
+			if (sel.dataset.open==='true') ctxs(() => { inp.focus(); });
 			sel.dataset.open=(sel.dataset.open==='false' ? 'true' : 'false');
 		};
 
