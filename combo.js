@@ -1,9 +1,14 @@
 "use strict";
 
 function Combo() {
-	let elem, lru;
-	let changeFunc, escapeFunc, keydownFunc, blurFunc;
+	let self, elem, lru;
+	let changeFunc, keydownFunc, blurFunc;
 	let sel, inp;
+
+	function ctxs(...args) { 	setTimeout(() => args[0](...(args.slice(1))), 0);  } // context switch
+
+	function getInputElement() { return inp; }
+	function getSelectElement() { return sel; 	}
 
 	function addOpt(optText) {
 		let exists=false;
@@ -16,7 +21,8 @@ function Combo() {
 		if (sel.children.length>lru) sel.removeChild(sel.children[sel.children.length-1]);
 	}
 
-	function setOptions(opts) {
+	function options(opts=undefined) {
+		if (opts===undefined) return sel.options;
 		if (opts.constructor !== Array) opts=[opts];
 		for(let i = sel.options.length - 1 ; i >= 0 ; i--) sel.remove(i); // clear
 		for(let i = opts.length - 1 ; i >= 0 ; i--) addOpt(opts[i]); 
@@ -24,6 +30,7 @@ function Combo() {
 	}
 
 	function toggle(b=undefined) {
+		if (b===undefined) b=(elem.style.display==='none');
 		elem.style.display=(b ? 'block' : 'none');
 	}
 
@@ -40,7 +47,7 @@ function Combo() {
 			e.stopPropagation();
 			if (inp.value!==sel.value) {
 				inp.value=sel.value;
-				if (changeFunc) setTimeout(() => { changeFunc(sel.value); },0);
+				if (changeFunc) ctxs(changeFunc, self);
 			}
 		};
 
@@ -51,7 +58,7 @@ function Combo() {
 			if (key==='Enter') {
 				if (inp.value) {
 					addOpt(inp.value);
-					if (changeFunc) setTimeout(() => { changeFunc(inp.value); }, 0);
+					if (changeFunc) ctxs(changeFunc, self);
 				}
 			} else if (key==='ArrowUp') {
 				if (sel.selectedIndex>0) {
@@ -63,9 +70,9 @@ function Combo() {
 					sel.selectedIndex++;
 					inp.value=sel.value;
 				}
-			} else {
-				if (keydownFunc) setTimeout(() => { keydownFunc(key, inp.value); }, 0);
-			}
+			} 
+
+			if (keydownFunc) keydownFunc(e, self);
 
 			return true;
 		};
@@ -77,19 +84,18 @@ function Combo() {
 		// switch focus to input when closing combo
 		sel.onclick = e => {
 			e.stopPropagation();
-			if (sel.dataset.open==='true') setTimeout(inp.focus(), 0);
+			if (sel.dataset.open==='true') ctxs(inp.focus);
 			sel.dataset.open=(sel.dataset.open==='false' ? 'true' : 'false');
 		};
 
 		inp.onblur = sel.onblur = e => { 
-			if (blurFunc) blurFunc(e); 
+			if (blurFunc) blurFunc(e, self); 
 		}
 	}
 
 	// constructor
 	function ctor(elem_, lru_=5) {
-		elem=elem_;
-		lru=lru_;
+		self=this; elem=elem_; lru=lru_;
 
 		let innerHTML=`
 			<select style="border: none; outline: none;padding: 0; margin: 0; "></select>
@@ -126,20 +132,18 @@ function Combo() {
 	// public interface
 	return {
 		ctor, 
-		toggle, // (bool) show/hide or toggle if s undefined 
+		toggle, // (true/false/undefined) show/hide/toggle combo
 		focus,  // move focus to the input area
-		select, // (bool) select/deselect the text in the input field
+		select, // (true/false/undefined) select/deselect the text in the input field, default trure
+		options, // (array/undefined) sets/returns the array of options , default undefined
+		getInputElement, // () return the input element
+		getSelectElement, // () return the select element
 
-		get value() { return inp.value; }, // return value of input area
-		set value(val) { inp.value=val; }, // set value of input area
-		get options() { return sel.options; }, // return array of select options
-		set options(opts) { setOptions(opts); }, // set select with array of options
-		get inputElement() { return inp; }, // return the input element
-		get selectElement() { return sel; }, // return the select element
+		get value() { return inp.value; }, // () return value of input area
+		set value(val) { inp.value=val; }, // (string) set value of input area
 
-		set onchange(f) { changeFunc=f;  }, // f will be called with value when selection changes
-		set onescape(f) { escapeFunc=f;  }, // f will be called when escape is pressed
-		set onkeydown(f) { keydownFunc=f;  }, // f will be called when keydown is pressed with (e.key, value())
-		set onblur(f) { blurFunc=f;  }, // f will be called with event object on blur
+		set onchange(f) { changeFunc=f;  }, // f(self) will be called when enter is pressed in the input field or selection changes
+		set onkeydown(f) { keydownFunc=f;  }, // f(event, self) will be called when keydown is pressed with
+		set onblur(f) { blurFunc=f;  }, // f(event, self) will be called on blur
 	};
 }
