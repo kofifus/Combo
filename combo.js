@@ -20,7 +20,7 @@ function Combo() {
 	function ctxsEvent(e, f) { 
 		let c=cloneEvent(e); 
 		c.currentTarget=self; 
-		setTimeout(() => f.call(self, c, self), 0); 
+		setTimeout(() => f.call(self, c, self), 20); 
 	}
 
 	function getInputElement() { return inp; }
