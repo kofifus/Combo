@@ -1,11 +1,27 @@
-"use strict";
-
 function Combo() {
+	"use strict";
 	let self, elem, lru;
 	let changeFunc, keydownFunc, blurFunc;
 	let sel, inp;
 
-	function ctxs(...args) { setTimeout(() => args[0](...(args.slice(1))), 0);  } // context switch
+	function cloneEvent(e) {
+		if (e===undefined || e===null) return undefined;
+		function ClonedEvent() {};  
+		let clone=new ClonedEvent();
+		for (let p in e) {
+			let d=Object.getOwnPropertyDescriptor(e, p);
+			if (d && (d.get || d.set)) Object.defineProperty(clone, p, d); else clone[p] = e[p];
+		}
+		Object.setPrototypeOf(clone, e);
+		return clone;
+	}
+
+	// call f after a setTimeout(0) with a clone of e where e.currentTarget==self and this==self
+	function ctxsEvent(e, f) { 
+		let c=cloneEvent(e); 
+		c.currentTarget=self; 
+		setTimeout(() => f.call(self, c, self), 0); 
+	}
 
 	function getInputElement() { return inp; }
 	function getSelectElement() { return sel; 	}
@@ -47,7 +63,7 @@ function Combo() {
 			e.stopPropagation();
 			if (inp.value!==sel.value) {
 				inp.value=sel.value;
-				if (changeFunc) ctxs(changeFunc, sel.value, self);
+				if (changeFunc) ctxsEvent(e, changeFunc);
 			}
 		};
 
@@ -55,11 +71,16 @@ function Combo() {
 			e.stopPropagation();
 			let key=e.key;
 
+			let res;
+			if (keydownFunc) res=keydownFunc(e, self);
+			if (res===false || e.defaultPrevented) return;
+
 			if (key==='Enter') {
 				if (inp.value) {
 					addOpt(inp.value);
-					if (changeFunc) ctxs(changeFunc, inp.value, self);
+					if (changeFunc) ctxsEvent(e, changeFunc);
 				}
+				e.preventDefault();
 			} else if (key==='ArrowUp') {
 				if (sel.selectedIndex>0) {
 					sel.selectedIndex--;
@@ -72,8 +93,6 @@ function Combo() {
 				}
 			} 
 
-			if (keydownFunc) keydownFunc(e, self);
-
 			return true;
 		};
 		
@@ -83,7 +102,7 @@ function Combo() {
 
 		sel.onclick = e => {
 			e.stopPropagation();
-			if (sel.dataset.open==='true') ctxs(() => { inp.focus(); }); else	sel.selectedIndex = -1; 
+			if (sel.dataset.open==='true') setTimeout(null, () => { inp.focus(); }, 0); else sel.selectedIndex = -1; 
 			sel.dataset.open=(sel.dataset.open==='false' ? 'true' : 'false');
 		};
 
@@ -141,7 +160,11 @@ function Combo() {
 		get value() { return inp.value; }, // () return value of input area
 		set value(val) { inp.value=val; }, // (string) set value of input area
 
-		set onchange(f) { changeFunc=f;  }, // f(val, self) will be called when enter is pressed in the input field or selection changes
+		// f(e, self) will be called when Enter is pressed in the input field or selection changes
+		// e is a clone of the original event (onchange/onkeydown) with currentTarget set to the combo
+		// inside f, this==self, also as e is a clone of the original event there is no point in e.preventDefault it etc
+		set onchange(f) { changeFunc=f;  }, 
+
 		set onkeydown(f) { keydownFunc=f;  }, // f(event, self) will be called when keydown is pressed with
 		set onblur(f) { blurFunc=f;  }, // f(event, self) will be called on blur
 	};
