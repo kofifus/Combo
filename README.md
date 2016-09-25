@@ -33,11 +33,10 @@ getters:
 setters: 
 
 - value=val&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- set value of input area
-- onchange=f&nbsp;&nbsp;&nbsp; - f(event, self) will be called when Enter is pressed in the input field or selection changes<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e is a clone of the original event (onchange/onkeydown) with currentTarget set to the combo<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inside f, this==self, also as e is a clone of the original event there is no point in e.preventDefault it etc<br>
-- onkeydown=f - f(event, self) will be called when keydown is pressed with
-- onblur=f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- f(event, self) will be called on blur
+- onchange=f&nbsp;&nbsp;&nbsp; - f(e, self) will be called with this==self when Enter is pressed in the input field or selection changes
+- oninput=f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - f(e, self) will be called with this==self on input event in input field
+- onkeydown=f - f(e, self) will be called with this==self on keydown event in input field
+- onblur=f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- f(e, self) will be called with this==self on blur of the combo
 <br/><br/>
 
 **Example:**
