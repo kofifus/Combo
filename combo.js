@@ -1,27 +1,11 @@
 function Combo() {
 	"use strict";
 	let self, elem, lru;
-	let changeFunc, keydownFunc, blurFunc;
+	let changeFunc, keydownFunc, oninputFunc, blurFunc;
 	let sel, inp;
 
-	function cloneEvent(e) {
-		if (e===undefined || e===null) return undefined;
-		function ClonedEvent() {};  
-		let clone=new ClonedEvent();
-		for (let p in e) {
-			let d=Object.getOwnPropertyDescriptor(e, p);
-			if (d && (d.get || d.set)) Object.defineProperty(clone, p, d); else clone[p] = e[p];
-		}
-		Object.setPrototypeOf(clone, e);
-		return clone;
-	}
-
-	// call f after a setTimeout(0) with a clone of e where e.currentTarget==self and this==self
-	function ctxsEvent(e, f) { 
-		let c=cloneEvent(e); 
-		c.currentTarget=self; 
-		setTimeout(() => f.call(self, c, self), 20); 
-	}
+	// call f(e, self) after a setTimeout(20) with this==self
+	function ctxsEvent(e, f) { setTimeout(() => f.call(self, e, self), 20) } 
 
 	function getInputElement() { return inp; }
 	function getSelectElement() { return sel; 	}
@@ -95,6 +79,10 @@ function Combo() {
 
 			return true;
 		};
+
+		inp.oninput = e => {
+			if (oninputFunc) ctxsEvent(e, oninputFunc);
+		};
 		
 		inp.onclick = e => {
 			e.stopPropagation();
@@ -165,7 +153,9 @@ function Combo() {
 		// inside f, this==self, also as e is a clone of the original event there is no point in e.preventDefault it etc
 		set onchange(f) { changeFunc=f;  }, 
 
-		set onkeydown(f) { keydownFunc=f;  }, // f(event, self) will be called when keydown is pressed with
-		set onblur(f) { blurFunc=f;  }, // f(event, self) will be called on blur
+		set oninput(f) { oninputFunc=f;  }, // f(e, self) input event in input field, event and self as for onchange
+
+		set onkeydown(f) { keydownFunc=f;  }, // f(e, self) keydown event in input field
+		set onblur(f) { blurFunc=f;  }, // f(e, self) blur of the combo
 	};
 }
