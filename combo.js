@@ -1,7 +1,7 @@
 function Combo() {
 	"use strict";
 	let self, elem, lru;
-	let changeFunc, keydownFunc, oninputFunc, blurFunc;
+	let changeFunc, keydownFunc, inputFunc, blurFunc;
 	let sel, inp;
 
 	// call f(e, self) after a setTimeout(20) with this==self
@@ -47,7 +47,7 @@ function Combo() {
 			e.stopPropagation();
 			if (inp.value!==sel.value) {
 				inp.value=sel.value;
-				if (changeFunc) ctxsEvent(e, changeFunc);
+				if (changeFunc)  setTimeout(() => changeFunc.call(self, e, self), 20);
 			}
 		};
 
@@ -56,13 +56,13 @@ function Combo() {
 			let key=e.key;
 
 			let res;
-			if (keydownFunc) res=keydownFunc(e, self);
+			if (keydownFunc) res=keydownFunc.call(self, e, self);
 			if (res===false || e.defaultPrevented) return;
 
 			if (key==='Enter') {
 				if (inp.value) {
 					addOpt(inp.value);
-					if (changeFunc) ctxsEvent(e, changeFunc);
+					if (changeFunc) setTimeout(() => changeFunc.call(self, e, self), 20);
 				}
 				e.preventDefault();
 			} else if (key==='ArrowUp') {
@@ -81,7 +81,7 @@ function Combo() {
 		};
 
 		inp.oninput = e => {
-			if (oninputFunc) ctxsEvent(e, oninputFunc);
+			if (inputFunc) inputFunc.call(self, e, self);
 		};
 		
 		inp.onclick = e => {
@@ -95,7 +95,7 @@ function Combo() {
 		};
 
 		inp.onblur = sel.onblur = e => { 
-			if (blurFunc) blurFunc(e, self); 
+			if (blurFunc) blurFunc.call(self, e, self); 
 		}
 	}
 
@@ -148,14 +148,9 @@ function Combo() {
 		get value() { return inp.value; }, // () return value of input area
 		set value(val) { inp.value=val; }, // (string) set value of input area
 
-		// f(e, self) will be called when Enter is pressed in the input field or selection changes
-		// e is a clone of the original event (onchange/onkeydown) with currentTarget set to the combo
-		// inside f, this==self, also as e is a clone of the original event there is no point in e.preventDefault it etc
-		set onchange(f) { changeFunc=f;  }, 
-
-		set oninput(f) { oninputFunc=f;  }, // f(e, self) input event in input field, event and self as for onchange
-
-		set onkeydown(f) { keydownFunc=f;  }, // f(e, self) keydown event in input field
-		set onblur(f) { blurFunc=f;  }, // f(e, self) blur of the combo
+		set onchange(f) { changeFunc=f;  },  // f(e, self) will be called with this==self when Enter is pressed in the input field or selection changes
+		set oninput(f) { inputFunc=f;  }, // f(e, self) will be called with this==self on input event in input field
+		set onkeydown(f) { keydownFunc=f;  }, // f(e, self) will be called with this==self on keydown event in input field
+		set onblur(f) { blurFunc=f;  }, // f(e, self) will be called with this==self on blur of the combo
 	};
 }
