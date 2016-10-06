@@ -20,8 +20,8 @@ methods:
 
 - Combo(div) - constructor
 - focus() - move focus to the input area
-- select(true/false/undefined) - select/deselect the text in the input field, default trure
-- options(array/undefined) - sets/returns the array of options , default undefined
+- select(true/false/undefined) - select/deselect the text in the input field, default to true
+- options(array/undefined) - sets/returns the array of options , default to undefined
 
 - getInputElement() - return the input element
 - getSelectElement() - return the select element
