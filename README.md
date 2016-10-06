@@ -19,12 +19,13 @@ let combo=Combo.New(div);
 methods:
 
 - Combo(div) - constructor 
-- toggle(true/false/undefined) - show/hide/toggle combo
 - focus() - move focus to the input area
 - select(true/false/undefined) - select/deselect the text in the input field, default trure
 - options(array/undefined) - sets/returns the array of options , default undefined
+
 - getInputElement() - return the input element
 - getSelectElement() - return the select element
+- getWrapper() - return the wrapper div
 
 getters:
 
