@@ -18,7 +18,7 @@ let combo=Combo.New(div);
 
 methods:
 
-- Combo(div) - constructor 
+- Combo(div) - constructor
 - focus() - move focus to the input area
 - select(true/false/undefined) - select/deselect the text in the input field, default trure
 - options(array/undefined) - sets/returns the array of options , default undefined
