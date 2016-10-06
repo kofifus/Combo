@@ -1,17 +1,14 @@
 function Combo() {
-	"use strict";
+	'use strict';
 	let self, elem, lru;
 	let changeFunc, keydownFunc, inputFunc, blurFunc;
 	let sel, inp;
 
-	// call f(e, self) after a setTimeout(20) with this==self
-	function ctxsEvent(e, f) { setTimeout(() => f.call(self, e, self), 20) } 
-
 	function getInputElement() { return inp; }
 	function getSelectElement() { return sel; 	}
+	function getWrapper() { return elem; }
 
 	function addOpt(optText) {
-		let exists=false;
 		for (let i=0; i<sel.options.length; i++) if (sel.options[i].text===optText) return; // already there
 
 		let option = document.createElement('option');
@@ -27,11 +24,6 @@ function Combo() {
 		for(let i = sel.options.length - 1 ; i >= 0 ; i--) sel.remove(i); // clear
 		for(let i = opts.length - 1 ; i >= 0 ; i--) addOpt(opts[i]); 
 		sel.selectedIndex = -1; 
-	}
-
-	function toggle(b=undefined) {
-		if (b===undefined) b=(elem.style.display==='none');
-		elem.style.display=(b ? 'block' : 'none');
 	}
 
 	function focus() { 
@@ -60,10 +52,8 @@ function Combo() {
 			if (res===false || e.defaultPrevented) return;
 
 			if (key==='Enter') {
-				if (inp.value) {
-					addOpt(inp.value);
-					if (changeFunc) setTimeout(() => changeFunc.call(self, e, self), 20);
-				}
+				if (inp.value) addOpt(inp.value);
+				if (changeFunc) setTimeout(() => changeFunc.call(self, e, self), 20);
 				e.preventDefault();
 			} else if (key==='ArrowUp') {
 				if (sel.selectedIndex>0) {
@@ -96,7 +86,7 @@ function Combo() {
 
 		inp.onblur = sel.onblur = e => { 
 			if (blurFunc) blurFunc.call(self, e, self); 
-		}
+		};
 	}
 
 	// constructor
@@ -138,12 +128,13 @@ function Combo() {
 	// public interface
 	return {
 		ctor, 
-		toggle, // (true/false/undefined) show/hide/toggle combo
 		focus,  // move focus to the input area
 		select, // (true/false/undefined) select/deselect the text in the input field, default trure
 		options, // (array/undefined) sets/returns the array of options , default undefined
+
 		getInputElement, // () return the input element
 		getSelectElement, // () return the select element
+		getWrapper, // () return wrapper div
 
 		get value() { return inp.value; }, // () return value of input area
 		set value(val) { inp.value=val; }, // (string) set value of input area
