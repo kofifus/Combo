@@ -1,6 +1,6 @@
-function Combo() {
+function Combo(elem, lru=5) {
 	'use strict';
-	let self, elem, lru;
+	let self=this;
 	let changeFunc, keydownFunc, inputFunc, blurFunc;
 	let sel, inp;
 
@@ -90,9 +90,7 @@ function Combo() {
 	}
 
 	// constructor
-	function ctor(elem_, lru_=5) {
-		self=this; elem=elem_; lru=lru_;
-
+	function ctor() {
 		let innerHTML=`
 			<select style="border: none; outline: none;padding: 0; margin: 0; "></select>
 			<input style="border: none; outline: none; padding: 0; margin: 0; position:relative; margin-left: 1px;"/>`; 
@@ -127,7 +125,6 @@ function Combo() {
 
 	// public interface
 	return {
-		ctor, 
 		focus,  // move focus to the input area
 		select, // (true/false/undefined) select/deselect the text in the input field, default trure
 		options, // (array/undefined) sets/returns the array of options , default undefined
