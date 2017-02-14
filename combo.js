@@ -1,5 +1,5 @@
+'use strict';
 function Combo(elem, lru=5) {
-	'use strict';
 	let self=this;
 	let changeFunc, keydownFunc, inputFunc, blurFunc;
 	let sel, inp;
