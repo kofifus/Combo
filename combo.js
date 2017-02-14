@@ -122,6 +122,8 @@ function Combo(elem, lru=5) {
 
 		hookEvents();
 	}
+	
+	ctor();
 
 	// public interface
 	return {
